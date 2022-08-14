@@ -32,8 +32,8 @@ const Exercise = mongoose.model('Exercise', ExerciseSchema);
 
 app.post('/api/users', (req, res) => {
   let user = new User({username: req.body.username});
-  res.json(user);
   user.save();
+  res.json(user);
 });
 
 app.get('/api/users', (req, res) => {
@@ -49,8 +49,8 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   let user = await User.findById(req.params._id);
   let exercise = await new Exercise({description: descr, duration: duration, date: date});
   user.exercises.push(exercise);
-  res.json(Object.assign(user, {duration: exercise.duration, date: exercise.date.toDateString() }));
   user.save();
+  res.json({ _id: user._id, username: user.username, description: descr, duration: duration, date: date.toDateString() })
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
