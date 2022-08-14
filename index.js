@@ -32,13 +32,13 @@ const Exercise = mongoose.model('Exercise', ExerciseSchema);
 
 app.post('/api/users', (req, res) => {
   let user = new User({username: req.body.username});
-  res.json({_id: user._id, username: user.username});
+  res.json(user);
   user.save();
 });
 
 app.get('/api/users', (req, res) => {
   User.find({}, (err, docs) => {
-    res.json(docs.map(el => ({ _id: el._id, username: el.username })));
+    res.json(docs);
   });
 });
 
@@ -49,15 +49,13 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   let user = await User.findById(req.params._id);
   let exercise = await new Exercise({description: descr, duration: duration, date: date});
   user.exercises.push(exercise);
-  console.log(user);
+  res.json(Object.assign(user, {duration: exercise.duration, date: exercise.date.toDateString() }));
   user.save();
-  res.json({ _id: user._id, username: user.username, description: descr, duration: exercise.duration, date: exercise.date.toDateString() })
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
   let user = await User.findById(req.params._id);
   console.log(await Exercise.find({}));
-  //let from = new Date(el.date);
   let fort = 0;
   user.exercises = req.query.from ? user.exercises.filter(el => (new Date(el.date)).getTime() > (new Date(req.query.from)).getTime()) : user.exercises;
   user.exercises = req.query.from ? user.exercises.filter(el => (new Date(el.date)).getTime() < (new Date(req.query.to)).getTime()) : user.exercises;
