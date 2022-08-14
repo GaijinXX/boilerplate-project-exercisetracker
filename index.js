@@ -51,7 +51,7 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   user.exercises.push(exercise);
   console.log(user);
   user.save();
-  res.json({ _id: user._id, username: user.username, description: exercise.description, duration: exercise.duration, date: exercise.date })
+  res.json({ _id: user._id, username: user.username, description: descr, duration: exercise.duration, date: exercise.date.toDateString() })
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
@@ -62,7 +62,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   user.exercises = req.query.from ? user.exercises.filter(el => (new Date(el.date)).getTime() > (new Date(req.query.from)).getTime()) : user.exercises;
   user.exercises = req.query.from ? user.exercises.filter(el => (new Date(el.date)).getTime() < (new Date(req.query.to)).getTime()) : user.exercises;
 
-  res.json({username: user.username, count: user.exercises.length, _id: user._id, log: user.exercises.slice(0, req.query.limit)});
+  res.json({username: user.username, count: user.exercises.length, _id: user._id, log: user.exercises.slice(0, req.query.limit).map(el => {el.date = (new Date(el.date)).toDateString()})});
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
