@@ -45,7 +45,7 @@ app.get('/api/users', (req, res) => {
 app.post('/api/users/:_id/exercises', async (req, res) => {
   let descr = req.body.description;
   let duration = req.body.duration;
-  let date = req.body.date;
+  let date = req.body.date ? req.body.date : Date.now();
   let user = await User.findById(req.params._id);
   let exercise = await new Exercise({description: descr, duration: duration, date: date});
   user.exercises.push(exercise);
