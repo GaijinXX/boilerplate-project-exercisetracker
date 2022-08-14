@@ -45,12 +45,12 @@ app.get('/api/users', (req, res) => {
 app.post('/api/users/:_id/exercises', async (req, res) => {
   let descr = req.body.description;
   let duration = req.body.duration;
-  let date = req.body.date ? req.body.date : Date.now();
+  let date = req.body.date;
   let user = await User.findById(req.params._id);
   let exercise = await new Exercise({description: descr, duration: duration, date: date});
   user.exercises.push(exercise);
   user.save();
-  res.json({ _id: user._id, username: user.username, description: descr, duration: duration, date: date.toDateString() })
+  res.json({ _id: user._id, username: user.username, description: descr, duration: duration, date: exercise.date.toDateString() })
 });
 
 app.get('/api/users/:_id/logs', async (req, res) => {
